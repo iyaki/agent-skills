@@ -1,6 +1,6 @@
 ---
 name: vertical-slice-architecture
-description: Prefer feature-centric architecture with Vertical Slice for AI-assisted systems while avoiding dogmatic over-engineering. Use when defining project structure, deciding architecture fit, refactoring layered code, or implementing slice that blend cleanly with Domain-Driven Design, Hexagonal Architecture, and layered conventions.
+description: Prefer feature-centric architecture with Vertical Slice for AI-assisted systems while avoiding dogmatic over-engineering. Use when defining project structure, deciding architecture fit, refactoring layered code, or implementing slices that blend cleanly with Domain-Driven Design, Hexagonal Architecture, and layered conventions. Host repo conventions (AGENTS.md/CLAUDE.md, ADRs, architecture gates) always take precedence over this skill's example layouts.
 ---
 
 # Vertical Slice Architecture
@@ -9,11 +9,15 @@ description: Prefer feature-centric architecture with Vertical Slice for AI-assi
 
 Use Vertical Slice as the default architecture bias for AI-assisted development. Optimize for change isolation, clear ownership, and deterministic implementation boundaries. Apply DDD and Hexagonal ideas where they add clarity, not ceremony.
 
-Treat this as a default, not a law. Choose simpler structure when scope is tiny or short-lived.
+Treat this as a default, not a law. Choose simpler structure when scope is tiny or short-lived. When a repo adopts this bias, record the decision in its own decision log (`docs/tech/ADR.md`, `adr/`, or equivalent) — the skill is not the policy source for any specific project.
 
-Policy source of truth:
+## Host Conventions Win
 
-- `adr/2026-04-21-default-to-vertical-slice-architecture.md`
+This skill provides reasoning, boundaries, and a workflow — not a mandatory layout. The host repo's own rules (AGENTS.md, CLAUDE.md, its ADRs, and any architecture gate such as `mago guard` or deptrac) are always authoritative for the concrete shape of a slice. Before creating files:
+
+- If the repo already defines a slice layout, mirror the closest existing slice exactly — same folder depth, same file roles, same vocabulary. Do not introduce roles the repo does not use (no `command`/`repository` files where the convention is Controller + Request + Handler).
+- If the repo has no architecture conventions, the structures below are reasonable defaults.
+- When this skill and a repo convention disagree, the repo wins and the disagreement is worth an ADR, not a silent override.
 
 ## Default Position
 
@@ -38,18 +42,26 @@ If most checks are weak, keep structure minimal and revisit after real complexit
 
 ## Implement Vertical Slice
 
-Follow this workflow in order:
-
-1. Define one use case as one slice boundary.
-2. Place request mapping, validation, orchestration, domain behavior, and persistence coordination inside that slice.
-3. Keep cross-slice dependencies explicit and minimal.
-4. Keep dependency direction inward toward slice application/domain logic.
-5. Write tests at slice boundaries first, then inside critical rules.
-6. Extract shared code only after repeated, proven duplication.
+1. Read the host's conventions (AGENTS.md/CLAUDE.md, existing slices, architecture gates) and mirror the closest existing slice before inventing structure.
+2. Define one use case as one slice boundary.
+3. Place request mapping, validation, orchestration, domain behavior, and persistence coordination inside that slice.
+4. Keep cross-slice dependencies explicit and minimal.
+5. Keep dependency direction inward toward slice application/domain logic.
+6. Write tests at slice boundaries first, then inside critical rules.
+7. Extract shared code only after repeated, proven duplication.
 
 Use a structure similar to:
 
 ```text
+# Minimal shape (typical MVC / server-rendered app)
+features/
+  orders/
+    create/
+      CreateOrderController   # endpoint + validation + orchestration
+      CreateOrderRequest
+      create-order.view
+
+# Richer shape (complex domain, many use-case collaborators)
 features/
   orders/
     create/
@@ -60,6 +72,8 @@ features/
       repository
       tests
 ```
+
+The slice boundary is the feature/use-case folder. Its internal file roles are a host-convention decision (see Host Conventions Win): a single controller file is a valid slice, and so is a full command/handler/domain set.
 
 ## Mix Patterns Safely
 
