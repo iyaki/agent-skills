@@ -13,7 +13,7 @@ Treat this as a default, not a law. Choose simpler structure when scope is tiny 
 
 ## Host Conventions Win
 
-This skill provides reasoning, boundaries, and a workflow — not a mandatory layout. The host repo's own rules (AGENTS.md, CLAUDE.md, its ADRs, and any architecture gate such as `mago guard` or deptrac) are always authoritative for the concrete shape of a slice. Before creating files:
+This skill provides reasoning, boundaries, and a workflow — not a mandatory layout. The host repo's own rules (AGENTS.md, CLAUDE.md, its ADRs, and any architecture gate) are always authoritative for the concrete shape of a slice. Gates are ecosystem-specific: `mago guard` or deptrac in PHP, dependency-cruiser or eslint boundaries in JS/TS, import-linter in Python, ArchUnit in Java. Before creating files:
 
 - If the repo already defines a slice layout, mirror the closest existing slice exactly — same folder depth, same file roles, same vocabulary. Do not introduce roles the repo does not use (no `command`/`repository` files where the convention is Controller + Request + Handler).
 - If the repo has no architecture conventions, the structures below are reasonable defaults.
